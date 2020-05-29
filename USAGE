@@ -1,0 +1,44 @@
+FreeSurfer pipeline
+===================
+
+Run recon-all on all encountered subjects
+
+USAGE
+
+nextflow run main.nf [OPTIONAL_ARGUMENTS] --root
+
+DESCRIPTION
+
+    --root_fs_input = false=/path/to/[root]     Root folder containing multiple subjects
+                                                [root]
+                                                ├── S1
+                                                │   └── t1.nii.gz
+                                                └── S2
+                                                    └── t1.nii.gz
+
+    --root_fs_output = false=/path/to/[root]    Root folder containing multiple subjects
+                                                [root]
+                                                ├── S1
+                                                │   └── label, mri, [...], stats, surf, touch
+                                                └── S2
+                                                    └── label, mri, [...], stats, surf, touch
+
+OPTIONAL ARGUMENTS (current value)
+--atlas_utils_folder                    Folder needed for other atlas conversion ($atlas_utils_folder)
+--nb_threads                            Number of threads used by recon-all ($nb_threads)
+--brainstem_structures                  Uses the Freesurfer option for brainstem structures (3 ROIs instead of 1)
+
+NOTES
+
+To set the number of parallel processes to launch, please use:
+'nextflow run -qs {nb_processes}'.
+
+Need to have FreeSurfer v. 6.0
+
+The intermediate working directory is, by default, set to './work'.
+To change it, use the '-w WORK_DIR' argument.
+
+The default config file is freesurfer_pipeline/nextflow.config.
+Use '-C config_file.config' to specify a non-default configuration file.
+The '-C config_file.config' must be inserted after the nextflow call
+like 'nextflow -C config_file.config run ...'.
