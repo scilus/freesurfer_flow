@@ -4,6 +4,7 @@ params.root_fs_input = false
 params.root_fs_output = false
 params.help = false
 
+
 if(params.help) {
     usage = file("$baseDir/USAGE")
 
@@ -61,7 +62,7 @@ process Recon_All {
     script:
     """
     export SUBJECTS_DIR=.
-    if [ ${params.brainstem_structures} ]; then
+    if ${params.brainstem_structures}; then
         recon-all -i $anat -s $sid -all -parallel -openmp $params.nb_threads -brainstem-structures
     else
         recon-all -i $anat -s $sid -all -parallel -openmp $params.nb_threads
@@ -84,7 +85,7 @@ process Generate_Atlases {
     script:
     """
     echo ${folder}
-    if [ ${params.brainstem_structures} ]; then
+    if ${params.brainstem_structures}; then
         version=FS_BN_GL_utils_with_brainstem_structures
     else
         version=FS_BN_GL_utils_without_brainstem_structures
