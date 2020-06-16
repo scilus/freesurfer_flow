@@ -1,17 +1,12 @@
 #!/usr/bin/env nextflow
 
-params.root_fs_input = false
-params.root_fs_output = false
-params.help = false
-
-
 if(params.help) {
     usage = file("$baseDir/USAGE")
 
     cpu_count = Runtime.runtime.availableProcessors()
-    bindings = ["nb_threads":"$params.nb_threads"]
-    bindings = ["atlas_utils_folder":"$params.atlas_utils_folder"]
-    bindings = ["brainstem_structures":"$params.brainstem_structures"]
+    bindings = ["nb_threads":"$params.nb_threads",
+                "atlas_utils_folder":"$params.atlas_utils_folder",
+                "brainstem_structures":"$params.brainstem_structures"]
 
     engine = new groovy.text.SimpleTemplateEngine()
     template = engine.createTemplate(usage.text).make(bindings)
@@ -24,14 +19,29 @@ log.info "Run Freesurfer"
 log.info "========================="
 log.info ""
 
+log.info ""
+log.info "Start time: $workflow.start"
+log.info ""
+
 log.debug "[Command-line]"
 log.debug "$workflow.commandLine"
 log.debug ""
-log.debug "Thanks to Félix C. Morency from imeka.ca for the inspiration."
+
+log.info "[Git Info]"
+log.info "$workflow.repository - $workflow.revision [$workflow.commitId]"
+log.info ""
 
 log.info "[Inputs]"
 log.info "Root FS Input: $params.root_fs_input"
 log.info "Root FS Output: $params.root_fs_output"
+
+log.info "Options"
+log.info "======="
+log.info ""
+log.info "Number of Thread: $params.nb_threads"
+log.info "Atlas Utils Folder: $params.atlas_utils_folder"
+log.info "Brainstem Structures: $params.brainstem_structures"
+log.info ""
 
 if (params.root_fs_input) {
 root_fs_input = file(params.root_fs_input)
