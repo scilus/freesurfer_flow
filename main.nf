@@ -61,8 +61,6 @@ else {
     in_folders = Channel.empty()
 }
 
-atlas_utils_folder = Channel.fromPath("$params.atlas_utils_folder")
-
 process Recon_All {
     cpus params.nb_threads
 
@@ -85,13 +83,12 @@ process Recon_All {
 
 in_folders
     .concat(folders_for_atlases)
-    .combine(atlas_utils_folder)
     .set{all_folders_for_atlases}
 process Generate_Atlases {
     cpus params.nb_threads
 
     input:
-    set sid, file(folder), file(utils) from all_folders_for_atlases
+    set sid, file(folder) from all_folders_for_atlases
 
     output:
     set sid, "$sid/FS_BN_GL_Atlas/"
@@ -104,7 +101,7 @@ process Generate_Atlases {
     else
         version=FS_BN_GL_utils_without_brainstem_structures
     fi
-    ln -s ${utils}/fsaverage \$(dirname ${folder})/
-    bash ${utils}/\${version}/generate_atlas_BN_FS_v2.sh \$(dirname ${folder}) ${sid} ${params.nb_threads} FS_BN_GL_Atlas/
+    ln -s $params.atlas_utils_folder/fsaverage \$(dirname ${folder})/
+    bash $params.atlas_utils_folder/\${version}/generate_atlas_BN_FS_v2.sh \$(dirname ${folder}) ${sid} ${params.nb_threads} FS_BN_GL_Atlas/
     """
 }
