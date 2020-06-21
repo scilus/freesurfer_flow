@@ -21,7 +21,8 @@ Requirements
 ------------
 
 - [Nextflow](https://www.nextflow.io)
-- FreeSurfer (https://surfer.nmr.mgh.harvard.edu/)
+- [FreeSurfer](https://surfer.nmr.mgh.harvard.edu/)
+- [scilpy](https://github.com/scilus/scilpy)
 
 Usage
 -----
