@@ -26,7 +26,7 @@ DESCRIPTION
 OPTIONAL ARGUMENTS (current value)
 --atlas_utils_folder                    Folder needed for other atlas conversion ($atlas_utils_folder)
 --nb_threads                            Number of threads used by recon-all ($nb_threads)
---brainstem_structures                  Uses the Freesurfer option for brainstem structures (3 ROIs instead of 1)
+--brainstem_structures                  Uses the Freesurfer option for brainstem structures, 3 ROIs instead of 1 ($brainstem_structures)
 
 NOTES
 
