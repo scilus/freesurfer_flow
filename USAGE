@@ -1,7 +1,18 @@
 FreeSurfer pipeline
 ===================
 
-Run recon-all on all encountered subjects
+Run recon-all on all subjects and create the customize freesurfer,
+brainnetome and glasser connectivity atlas in native space.
+
+The input can be the input for freesurfer, in this case the pipeline will start
+with recon-all. The input can also be the output folders from freesurfer, in
+this case the pipeline will start with the creation of the customize atlas.
+Both options can be used together, but running freesurfer on CBRAIN is recommanded
+to reduce usage on ComputeCanada's clusters.
+
+This pipeline must be used with a custom freesurfer singularity, several
+hard-to-get files are needed as well as custom scripts. The singularity
+container is available on braindata.
 
 USAGE
 
@@ -25,7 +36,7 @@ DESCRIPTION
 
 OPTIONAL ARGUMENTS (current value)
 --atlas_utils_folder                    Folder needed for other atlas conversion ($atlas_utils_folder)
---nb_threads                            Number of threads used by recon-all ($nb_threads)
+--nb_threads                            Number of threads used by recon-all and the atlases creation ($nb_threads)
 --brainstem_structures                  Uses the Freesurfer option for brainstem structures, 3 ROIs instead of 1 ($brainstem_structures)
 
 NOTES
