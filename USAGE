@@ -2,13 +2,16 @@ FreeSurfer pipeline
 ===================
 
 Run recon-all on all subjects and create the customize freesurfer,
-brainnetome and glasser connectivity atlas in native space.
+brainnetome and glasser connectivity atlas in native space. It is also possible
+to run this nextflow if your FreeSurfer is already computed.
 
 The input can be the input for freesurfer, in this case the pipeline will start
 with recon-all. The input can also be the output folders from freesurfer, in
 this case the pipeline will start with the creation of the customize atlas.
+
 Both options can be used together, but running freesurfer on CBRAIN is recommanded
-to reduce usage on ComputeCanada's clusters.
+to reduce usage on ComputeCanada's clusters. Running Freesurfer on CBRAIN is
+faster and better optimized for large number of subjects.
 
 This pipeline must be used with a custom freesurfer singularity, several
 hard-to-get files are needed as well as custom scripts. The singularity
