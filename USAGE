@@ -42,6 +42,9 @@ OPTIONAL ARGUMENTS (current value)
 --nb_threads                            Number of threads used by recon-all and the atlases creation ($nb_threads)
 --brainstem_structures                  Uses the Freesurfer option for brainstem structures, 3 ROIs instead of 1 ($brainstem_structures)
 
+--compute_FS_BN_GL                      Compute the connectivity-friendly atlases Freesurfer (adapted), brainnetome and glasser ($compute_FS_BN_GL)
+--compute_lausanne_multiscale           Compute the connectivity multiscale atlases from lausanne ($compute_lausanne_multiscale)
+
 NOTES
 
 To set the number of parallel processes to launch, please use:
