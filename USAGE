@@ -2,8 +2,9 @@ FreeSurfer pipeline
 ===================
 
 Run recon-all on all subjects and create the customize freesurfer,
-brainnetome and glasser connectivity atlas in native space. It is also possible
-to run this nextflow if your FreeSurfer is already computed.
+brainnetome and glasser connectivity atlas in native space. This pipeline also
+creates the 5 scales of the 2008 Lausanne Atlas. It is also possible to run
+this nextflow if your FreeSurfer is already computed.
 
 The input can be the input for freesurfer, in this case the pipeline will start
 with recon-all. The input can also be the output folders from freesurfer, in
