@@ -89,7 +89,6 @@ in_folders
 
 process Generate_Atlases_FS_BN_GL {
     cpus params.nb_threads
-    publishDir = {"./results_fs/$sid/Generate_Atlases_FS_BN_GL"}
 
     input:
     set sid, file(folder) from all_folders_for_atlases_FS_BN_GL
@@ -119,9 +118,8 @@ process Generate_Atlases_FS_BN_GL {
 
 scales = Channel.from(1,2,3,4,5)
 
-process Generate_Atlases_lausanne {
+process Generate_Atlases_Lausanne {
     cpus 1
-    publishDir = {"./results_fs/$sid/Generate_Atlases_Lausanne"}
 
     input:
     set sid, file(folder) from all_folders_for_atlases_lausanne
