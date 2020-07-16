@@ -129,7 +129,8 @@ process Generate_Atlases_Lausanne {
     params.compute_lausanne_multiscale
 
     output:
-    file "*.nii.gz"
+    file "lausanne_2008_scale_${scale}.nii.gz"
+    file "lausanne_2008_scale_${scale}_dilate.nii.gz"
     file "*.txt"
     file "*.json"
 
