@@ -138,7 +138,7 @@ process Generate_Atlases_Lausanne {
     """
     ln -s $params.atlas_utils_folder/fsaverage \$(dirname ${folder})/
     freesurfer_home=\$(dirname \$(dirname \$(which mri_label2vol)))
-    python3 $params.atlas_utils_folder/lausanne_multi_scale_atlas/generate_multiscale_parcellation.py \$(dirname ${folder}) ${sid} \$freesurfer_home --scale ${scale} --dilation_factor 0 --log_level DEBUG
+    python3.7 $params.atlas_utils_folder/lausanne_multi_scale_atlas/generate_multiscale_parcellation.py \$(dirname ${folder}) ${sid} \$freesurfer_home --scale ${scale} --dilation_factor 0 --log_level DEBUG
 
     mrthreshold ${folder}/mri/rawavg.mgz mask.nii.gz -abs 0.001 -quiet
     scil_reshape_to_reference.py ${folder}/mri/lausanne2008.scale${scale}+aseg.nii.gz mask.nii.gz lausanne_2008_scale_${scale}.nii.gz --interpolation nearest
