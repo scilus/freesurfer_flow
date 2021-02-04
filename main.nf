@@ -6,7 +6,6 @@ if(params.help) {
     cpu_count = Runtime.runtime.availableProcessors()
     bindings = ["nb_threads":"$params.nb_threads",
                 "atlas_utils_folder":"$params.atlas_utils_folder",
-                "brainstem_structures":"$params.brainstem_structures",
                 "compute_FS_BN_GL":"$params.compute_FS_BN_GL",
                 "compute_lausanne_multiscale":"$params.compute_lausanne_multiscale"]
 
@@ -42,7 +41,6 @@ log.info "======="
 log.info ""
 log.info "Number of Thread: $params.nb_threads"
 log.info "Atlas Utils Folder: $params.atlas_utils_folder"
-log.info "Brainstem Structures: $params.brainstem_structures"
 log.info ""
 
 if (params.root_fs_input) {
@@ -75,11 +73,7 @@ process Recon_All {
     script:
     """
     export SUBJECTS_DIR=.
-    if ${params.brainstem_structures}; then
-        recon-all -i $anat -s $sid -all -parallel -openmp $params.nb_threads -brainstem-structures
-    else
-        recon-all -i $anat -s $sid -all -parallel -openmp $params.nb_threads
-    fi
+    recon-all -i $anat -s $sid -all -parallel -openmp $params.nb_threads
     """
 }
 
@@ -103,16 +97,11 @@ process Generate_Atlases_FS_BN_GL {
 
     script:
     """
-    echo ${folder}
-    if ${params.brainstem_structures}; then
-        version=FS_BN_GL_utils_with_brainstem_structures
-    else
-        version=FS_BN_GL_utils_without_brainstem_structures
-    fi
+    version=freesurfer_utils/
     ln -s $params.atlas_utils_folder/fsaverage \$(dirname ${folder})/
-    bash $params.atlas_utils_folder/\${version}/generate_atlas_BN_FS_v2.sh \$(dirname ${folder}) ${sid} ${params.nb_threads} FS_BN_GL_Atlas/
+    bash $params.atlas_utils_folder/\${version}/generate_atlas_FS_BN_GL_SF_v3.sh \$(dirname ${folder}) ${sid} ${params.nb_threads} FS_BN_GL_SF_Atlas/
 
-    cp $sid/FS_BN_GL_Atlas/* ./
+    cp $sid/FS_BN_GL_SF_Atlas/* ./
     """
 }
 
