@@ -81,7 +81,7 @@ in_folders
     .concat(folders_for_atlases)
     .into{all_folders_for_atlases_FS_BN_GL;all_folders_for_atlases_lausanne}
 
-process Generate_Atlases_FS_BN_GL {
+process Generate_Atlases_FS_BN_GL_SF {
     cpus params.nb_threads
 
     input:
