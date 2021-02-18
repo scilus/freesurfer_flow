@@ -88,7 +88,7 @@ process Generate_Atlases_FS_BN_GL_SF {
     set sid, file(folder) from all_folders_for_atlases_FS_BN_GL
 
     when:
-    params.compute_FS_BN_GL
+    params.compute_FS_BN_GL_SF
 
     output:
     file "*.nii.gz"
