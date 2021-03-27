@@ -6,7 +6,7 @@ if(params.help) {
     cpu_count = Runtime.runtime.availableProcessors()
     bindings = ["nb_threads":"$params.nb_threads",
                 "atlas_utils_folder":"$params.atlas_utils_folder",
-                "compute_FS_BN_GL":"$params.compute_FS_BN_GL",
+                "compute_FS_BN_GL_SF":"$params.compute_FS_BN_GL_SF",
                 "compute_lausanne_multiscale":"$params.compute_lausanne_multiscale"]
 
     engine = new groovy.text.SimpleTemplateEngine()
@@ -129,7 +129,8 @@ process Generate_Atlases_Lausanne {
     freesurfer_home=\$(dirname \$(dirname \$(which mri_label2vol)))
     python3.7 $params.atlas_utils_folder/lausanne_multi_scale_atlas/generate_multiscale_parcellation.py \$(dirname ${folder}) ${sid} \$freesurfer_home --scale ${scale} --dilation_factor 0 --log_level DEBUG
 
-    mrthreshold ${folder}/mri/rawavg.mgz mask.nii.gz -abs 0.001 -quiet
+    mri_convert ${folder}/mri/rawavg.mgz rawavg.nii.gz
+    scil_image_math.py lower_threshold rawavg.nii.gz 0.001 mask.nii.gz --data_type uint8
     scil_reshape_to_reference.py ${folder}/mri/lausanne2008.scale${scale}+aseg.nii.gz mask.nii.gz lausanne_2008_scale_${scale}.nii.gz --interpolation nearest
     scil_image_math.py convert lausanne_2008_scale_${scale}.nii.gz lausanne_2008_scale_${scale}.nii.gz --data_type int16 -f
     scil_dilate_labels.py lausanne_2008_scale_${scale}.nii.gz lausanne_2008_scale_${scale}_dilate.nii.gz --distance 2 --mask mask.nii.gz
