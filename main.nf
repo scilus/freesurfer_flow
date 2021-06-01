@@ -6,7 +6,8 @@ if(params.help) {
     cpu_count = Runtime.runtime.availableProcessors()
     bindings = ["nb_threads":"$params.nb_threads",
                 "atlas_utils_folder":"$params.atlas_utils_folder",
-                "brainstem_structures":"$params.brainstem_structures"]
+                "compute_FS_BN_GL_SF":"$params.compute_FS_BN_GL_SF",
+                "compute_lausanne_multiscale":"$params.compute_lausanne_multiscale"]
 
     engine = new groovy.text.SimpleTemplateEngine()
     template = engine.createTemplate(usage.text).make(bindings)
@@ -40,7 +41,6 @@ log.info "======="
 log.info ""
 log.info "Number of Thread: $params.nb_threads"
 log.info "Atlas Utils Folder: $params.atlas_utils_folder"
-log.info "Brainstem Structures: $params.brainstem_structures"
 log.info ""
 
 if (params.root_fs_input) {
@@ -73,35 +73,69 @@ process Recon_All {
     script:
     """
     export SUBJECTS_DIR=.
-    if ${params.brainstem_structures}; then
-        recon-all -i $anat -s $sid -all -parallel -openmp $params.nb_threads -brainstem-structures
-    else
-        recon-all -i $anat -s $sid -all -parallel -openmp $params.nb_threads
-    fi
+    recon-all -i $anat -s $sid -all -parallel -openmp $params.nb_threads
     """
 }
 
 in_folders
     .concat(folders_for_atlases)
-    .set{all_folders_for_atlases}
-process Generate_Atlases {
+    .into{all_folders_for_atlases_FS_BN_GL;all_folders_for_atlases_lausanne}
+
+process Generate_Atlases_FS_BN_GL_SF {
     cpus params.nb_threads
 
     input:
-    set sid, file(folder) from all_folders_for_atlases
+    set sid, file(folder) from all_folders_for_atlases_FS_BN_GL
+
+    when:
+    params.compute_FS_BN_GL_SF
 
     output:
-    set sid, "$sid/FS_BN_GL_Atlas/"
+    file "*.nii.gz"
+    file "*.txt"
+    file "*.json"
 
     script:
     """
-    echo ${folder}
-    if ${params.brainstem_structures}; then
-        version=FS_BN_GL_utils_with_brainstem_structures
-    else
-        version=FS_BN_GL_utils_without_brainstem_structures
-    fi
+    version=freesurfer_utils/
     ln -s $params.atlas_utils_folder/fsaverage \$(dirname ${folder})/
-    bash $params.atlas_utils_folder/\${version}/generate_atlas_BN_FS_v2.sh \$(dirname ${folder}) ${sid} ${params.nb_threads} FS_BN_GL_Atlas/
+    bash $params.atlas_utils_folder/\${version}/generate_atlas_FS_BN_GL_SF_v3.sh \$(dirname ${folder}) ${sid} ${params.nb_threads} FS_BN_GL_SF_Atlas/
+
+    cp $sid/FS_BN_GL_SF_Atlas/* ./
+    """
+}
+
+scales = Channel.from(1,2,3,4,5)
+
+process Generate_Atlases_Lausanne {
+    cpus 1
+
+    input:
+    set sid, file(folder) from all_folders_for_atlases_lausanne
+    each scale from scales
+
+    when:
+    params.compute_lausanne_multiscale
+
+    output:
+    file "lausanne_2008_scale_${scale}.nii.gz"
+    file "lausanne_2008_scale_${scale}_dilate.nii.gz"
+    file "*.txt"
+    file "*.json"
+
+    script:
+    """
+    ln -s $params.atlas_utils_folder/fsaverage \$(dirname ${folder})/
+    freesurfer_home=\$(dirname \$(dirname \$(which mri_label2vol)))
+    python3.7 $params.atlas_utils_folder/lausanne_multi_scale_atlas/generate_multiscale_parcellation.py \$(dirname ${folder}) ${sid} \$freesurfer_home --scale ${scale} --dilation_factor 0 --log_level DEBUG
+
+    mri_convert ${folder}/mri/rawavg.mgz rawavg.nii.gz
+    scil_image_math.py lower_threshold rawavg.nii.gz 0.001 mask.nii.gz --data_type uint8
+    scil_reshape_to_reference.py ${folder}/mri/lausanne2008.scale${scale}+aseg.nii.gz mask.nii.gz lausanne_2008_scale_${scale}.nii.gz --interpolation nearest
+    scil_image_math.py convert lausanne_2008_scale_${scale}.nii.gz lausanne_2008_scale_${scale}.nii.gz --data_type int16 -f
+    scil_dilate_labels.py lausanne_2008_scale_${scale}.nii.gz lausanne_2008_scale_${scale}_dilate.nii.gz --distance 2 --mask mask.nii.gz
+    
+    cp $params.atlas_utils_folder/lausanne_multi_scale_atlas/*.txt ./
+    cp $params.atlas_utils_folder/lausanne_multi_scale_atlas/*.json ./
     """
 }

@@ -1,7 +1,22 @@
 FreeSurfer pipeline
 ===================
 
-Run recon-all on all encountered subjects
+Run recon-all on all subjects and create the customize freesurfer,
+brainnetome and glasser connectivity atlas in native space. This pipeline also
+creates the 5 scales of the 2008 Lausanne Atlas. It is also possible to run
+this nextflow if your FreeSurfer is already computed.
+
+The input can be the input for freesurfer, in this case the pipeline will start
+with recon-all. The input can also be the output folders from freesurfer, in
+this case the pipeline will start with the creation of the customize atlas.
+
+Both options can be used together, but running freesurfer on CBRAIN is recommanded
+to reduce usage on ComputeCanada's clusters. Running Freesurfer on CBRAIN is
+faster and better optimized for large number of subjects.
+
+This pipeline must be used with a custom freesurfer singularity, several
+hard-to-get files are needed as well as custom scripts. The singularity
+container is available on braindata.
 
 USAGE
 
@@ -25,8 +40,10 @@ DESCRIPTION
 
 OPTIONAL ARGUMENTS (current value)
 --atlas_utils_folder                    Folder needed for other atlas conversion ($atlas_utils_folder)
---nb_threads                            Number of threads used by recon-all ($nb_threads)
---brainstem_structures                  Uses the Freesurfer option for brainstem structures, 3 ROIs instead of 1 ($brainstem_structures)
+--nb_threads                            Number of threads used by recon-all and the atlases creation ($nb_threads)
+
+--compute_FS_BN_GL_SF                      Compute the connectivity-friendly atlases Freesurfer (adapted), brainnetome and glasser ($compute_FS_BN_GL_SF)
+--compute_lausanne_multiscale           Compute the connectivity multiscale atlases from lausanne ($compute_lausanne_multiscale)
 
 NOTES
 
@@ -38,7 +55,7 @@ Need to have FreeSurfer v. 6.0
 The intermediate working directory is, by default, set to './work'.
 To change it, use the '-w WORK_DIR' argument.
 
-The default config file is freesurfer_pipeline/nextflow.config.
+The default config file is freesurfer-nf/nextflow.config.
 Use '-C config_file.config' to specify a non-default configuration file.
 The '-C config_file.config' must be inserted after the nextflow call
 like 'nextflow -C config_file.config run ...'.

@@ -1,7 +1,8 @@
 # FreeSurfer pipeline
 ===================
 
-Run the FreeSurfer recon-all pipeline.
+Run the FreeSurfer recon-all pipeline and create the customize freesurfer,
+brainnetome and glasser connectivity atlas in native space.
 
 If you use this pipeline, please cite:
 
