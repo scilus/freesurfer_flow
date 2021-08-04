@@ -42,7 +42,8 @@ OPTIONAL ARGUMENTS (current value)
 --atlas_utils_folder                    Folder needed for other atlas conversion ($atlas_utils_folder)
 --nb_threads                            Number of threads used by recon-all and the atlases creation ($nb_threads)
 
---compute_FS_BN_GL_SF                      Compute the connectivity-friendly atlases Freesurfer (adapted), brainnetome and glasser ($compute_FS_BN_GL_SF)
+--compute_FS_BN_GL_SF                   Compute the connectivity-friendly atlases Freesurfer (adapted), 
+                                            brainnetome, glasser and Schaefer 100/200/400  ($compute_FS_BN_GL_SF)
 --compute_lausanne_multiscale           Compute the connectivity multiscale atlases from lausanne ($compute_lausanne_multiscale)
 
 NOTES
