@@ -16,7 +16,7 @@ faster and better optimized for large number of subjects.
 
 This pipeline must be used with a custom freesurfer singularity, several
 hard-to-get files are needed as well as custom scripts. The singularity
-container is available on braindata.
+container is available on braindata and the recipe is in the Git repository.
 
 USAGE
 
