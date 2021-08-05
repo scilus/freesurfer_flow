@@ -1,0 +1,78 @@
+Bootstrap: docker
+From: centos:centos7
+
+%setup
+    rm -rf $SINGULARITY_ROOTFS/freesurfer
+    mkdir $SINGULARITY_ROOTFS/freesurfer
+
+    wget -O freesurfer-linux-centos7_x86_64-dev.tar.gz "https://vanderbilt365-my.sharepoint.com/:u:/g/personal/francois_rheault_vanderbilt_edu/EbxZjN7BhmpFrGJfotDRUsYBhzG-ubPQT4GA_Vx07QkQwg?download=1"
+    tar zxvf freesurfer-linux-centos7_x86_64-dev.tar.gz -C $SINGULARITY_ROOTFS/freesurfer/
+
+    wget -O $SINGULARITY_ROOTFS/license.txt "https://vanderbilt365-my.sharepoint.com/:t:/g/personal/francois_rheault_vanderbilt_edu/EbdzkBldqPBKjRuwBo4wKfABjlT9_EWgngeYKJ2m6CbOSQ?download=1"
+    
+    wget -O $SINGULARITY_ROOTFS/fs_install_mcr.sh "https://vanderbilt365-my.sharepoint.com/:u:/g/personal/francois_rheault_vanderbilt_edu/EXnu9nlx7lFBjIikV8D6a2MBfwoREkem_X5Ui70aTmG3Mg?download=1"
+
+    wget -O FS_BN_GL_SF_utils.tar "https://vanderbilt365-my.sharepoint.com/:u:/g/personal/francois_rheault_vanderbilt_edu/EYfQBZZ5o0JClaKqG_bm3NoBcFE-pTUZzFw9lWARqCHoTw?download=1"
+    tar -xf FS_BN_GL_SF_utils.tar -C $SINGULARITY_ROOTFS/
+
+%environment
+    export MATPLOTLIBRC="/usr/local/lib/python3.5/dist-packages/matplotlib/mpl-data/"
+    export FREESURFER_HOME=/freesurfer/freesurfer/
+    . /freesurfer/freesurfer/SetUpFreeSurfer.sh
+
+%post
+    export FREESURFER_HOME=/freesurfer/freesurfer/
+    yum update -y
+    yum groupinstall -y development
+    yum install -y hostname openssl openssl-devel sqlite-devel sudo tar which
+    yum install -y libgomp tcsh bc perl wget unzip git
+    yum install -y gcc openssl-devel bzip2-devel libffi-devel zlib-devel xz-devel
+    yum -y install tcsh bc mesa-libGLU libgomp perl mesa-dri-drivers
+    yum -y install xorg-x11-server-Xvfb xorg-x11-xauth which
+
+    export LC_CTYPE="en_US.UTF-8"
+    export LC_ALL="en_US.UTF-8"
+    export LANG="en_US.UTF-8"
+    export LANGUAGE=en_US.UTF-8
+
+    wget http://ftp.gnu.org/gnu/parallel/parallel-latest.tar.bz2
+    tar xjf parallel-latest.tar.bz2
+    cd parallel-* && ./configure 
+    make && make install
+    echo 'will cite' | parallel --citation 1> /dev/null 2> /dev/null &
+
+    mv $SINGULARITY_ROOTFS/license.txt $FREESURFER_HOME/
+    mv $SINGULARITY_ROOTFS/fs_install_mcr.sh $FREESURFER_HOME/bin/
+    bash /freesurfer/freesurfer/bin/fs_install_mcr.sh R2012b
+
+    yum -y install atlas-devel lapack-devel blas-devel
+    yum -y install libjpeg-devel
+
+    cd /tmp && \
+    wget 'https://www.openssl.org/source/openssl-1.1.0h.tar.gz' &&\
+    tar -xf openssl-1.1.0h.tar.gz &&\
+    cd openssl-1.1.0h &&\
+    ./config shared --prefix=/usr/local/openssl11 --openssldir=/usr/local/openssl11 && make && make install
+
+    cd /tmp && \
+    wget https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tgz && \
+    tar xvfz Python-3.7.3.tgz && \
+    cd Python-3.7.3 && \
+    # Fix the SSL headers https://benad.me/blog/2018/07/17/python-3.7-on-centos-6/
+    sed -i 's/SSL=\/usr\/local\/ssl/SSL=\/usr\/local\/openssl11/g' Modules/Setup.dist &&\
+    sed -i '211,214 s/^##*//' Modules/Setup.dist &&\
+    # End of SSL fix
+    LDFLAGS="-Wl,-rpath=/usr/local/openssl11/lib" \
+    ./configure --prefix=/usr/local --enable-shared --with-openssl=/usr/local/openssl11 --with-system-ffi && \
+    make && \
+    make altinstall
+
+    cd $SINGULARITY_ROOTFS
+    echo "/usr/local/lib" >> /etc/ld.so.conf
+    ldconfig
+
+    pip3.7 install --upgrade pip
+    git clone https://github.com/frheault/scilpy.git $SINGULARITY_ROOTFS/scilpy/ && cd $SINGULARITY_ROOTFS/scilpy/
+    git checkout cd32812
+    pip3.7 install -r requirements.txt
+    python3.7 setup.py develop
