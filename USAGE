@@ -45,6 +45,9 @@ OPTIONAL ARGUMENTS (current value)
 --compute_FS_BN_GL_SF                   Compute the connectivity-friendly atlases Freesurfer (adapted), 
                                             brainnetome, glasser and Schaefer 100/200/400  ($compute_FS_BN_GL_SF)
 --compute_lausanne_multiscale           Compute the connectivity multiscale atlases from lausanne ($compute_lausanne_multiscale)
+--processes                             The number of parallel processes to launch ($cpu_count).
+                                            Only affects the local scheduler.
+
 
 NOTES
 
