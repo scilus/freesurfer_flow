@@ -98,7 +98,7 @@ process Generate_Atlases_FS_BN_GL_SF {
     script:
     """
     ln -s $params.atlas_utils_folder/fsaverage \$(dirname ${folder})/
-    bash $params.atlas_utils_folder/freesurfer_utils/generate_atlas_FS_BN_GL_SF_v3.sh \$(dirname ${folder}) ${sid} ${params.nb_threads} FS_BN_GL_SF_Atlas/
+    bash $params.atlas_utils_folder/freesurfer_utils/generate_atlas_FS_BN_GL_SF_v4.sh \$(dirname ${folder}) ${sid} ${params.nb_threads} FS_BN_GL_SF_Atlas/
 
     cp $sid/FS_BN_GL_SF_Atlas/* ./
     """
