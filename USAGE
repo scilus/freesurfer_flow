@@ -16,7 +16,7 @@ faster and better optimized for large number of subjects.
 
 This pipeline must be used with a custom freesurfer singularity, several
 hard-to-get files are needed as well as custom scripts. The singularity
-container is available on braindata.
+container is available on braindata and the recipe is in the Git repository.
 
 USAGE
 
@@ -42,8 +42,12 @@ OPTIONAL ARGUMENTS (current value)
 --atlas_utils_folder                    Folder needed for other atlas conversion ($atlas_utils_folder)
 --nb_threads                            Number of threads used by recon-all and the atlases creation ($nb_threads)
 
---compute_FS_BN_GL_SF                      Compute the connectivity-friendly atlases Freesurfer (adapted), brainnetome and glasser ($compute_FS_BN_GL_SF)
+--compute_FS_BN_GL_SF                   Compute the connectivity-friendly atlases Freesurfer (adapted), 
+                                            brainnetome, glasser and Schaefer 100/200/400  ($compute_FS_BN_GL_SF)
 --compute_lausanne_multiscale           Compute the connectivity multiscale atlases from lausanne ($compute_lausanne_multiscale)
+--processes                             The number of parallel processes to launch ($cpu_count).
+                                            Only affects the local scheduler.
+
 
 NOTES
 
