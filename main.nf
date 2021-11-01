@@ -7,8 +7,8 @@ if(params.help) {
     bindings = ["nb_threads":"$params.nb_threads",
                 "atlas_utils_folder":"$params.atlas_utils_folder",
                 "compute_FS_BN_GL_SF":"$params.compute_FS_BN_GL_SF",
-                "compute_lausanne_multiscale":"$params.compute_lausanne_multiscale"]
-
+                "compute_lausanne_multiscale":"$params.compute_lausanne_multiscale",
+		"cpu_count":"$cpu_count"]
     engine = new groovy.text.SimpleTemplateEngine()
     template = engine.createTemplate(usage.text).make(bindings)
 
