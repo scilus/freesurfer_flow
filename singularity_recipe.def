@@ -5,21 +5,23 @@ From: centos:centos7
     rm -rf $SINGULARITY_ROOTFS/freesurfer
     mkdir $SINGULARITY_ROOTFS/freesurfer
 
-    wget -O freesurfer-linux-centos7_x86_64-dev.tar.gz "https://vanderbilt365-my.sharepoint.com/:u:/g/personal/francois_rheault_vanderbilt_edu/EbxZjN7BhmpFrGJfotDRUsYBhzG-ubPQT4GA_Vx07QkQwg?download=1"
+    #wget -O freesurfer-linux-centos7_x86_64-dev.tar.gz "https://www.dropbox.com/s/qhhje2ond0ja7px/freesurfer-linux-centos7_x86_64-dev.tar.gz?dl=0?download=1"
     tar zxvf freesurfer-linux-centos7_x86_64-dev.tar.gz -C $SINGULARITY_ROOTFS/freesurfer/
 
-    wget -O $SINGULARITY_ROOTFS/license.txt "https://vanderbilt365-my.sharepoint.com/:t:/g/personal/francois_rheault_vanderbilt_edu/EbdzkBldqPBKjRuwBo4wKfABjlT9_EWgngeYKJ2m6CbOSQ?download=1"
-    
-    wget -O $SINGULARITY_ROOTFS/fs_install_mcr.sh "https://vanderbilt365-my.sharepoint.com/:u:/g/personal/francois_rheault_vanderbilt_edu/EXnu9nlx7lFBjIikV8D6a2MBfwoREkem_X5Ui70aTmG3Mg?download=1"
+    wget -O $SINGULARITY_ROOTFS/fs_install_mcr.sh "https://www.dropbox.com/s/v54cc4v6e6im0i9/fs_install_mcr.sh?dl=0d?download=1"
 
-    wget -O FS_BN_GL_SF_utils.tar "https://vanderbilt365-my.sharepoint.com/:u:/g/personal/francois_rheault_vanderbilt_edu/EYfQBZZ5o0JClaKqG_bm3NoBcFE-pTUZzFw9lWARqCHoTw?download=1"
+    wget -O $SINGULARITY_ROOTFS/license.txt "https://www.dropbox.com/s/zs4k3bcfxderj58/license.txt?dl=0"
+
+    #wget -O FS_BN_GL_SF_utils.tar "https://www.dropbox.com/s/zzptxby9pf5lpih/FS_BN_GL_SF_utils.tar?dl=0?download=1"
     tar -xf FS_BN_GL_SF_utils.tar -C $SINGULARITY_ROOTFS/
 
+    mkdir $SINGULARITY_ROOTFS/pybin $SINGULARITY_ROOTFS/CODE/
+    cp ../code/* $SINGULARITY_ROOTFS/CODE/
+
 %environment
-    export LD_LIBRARY_PATH=/usr/local/lib/
-    export MATPLOTLIBRC=/usr/local/lib/python3.7/dist-packages/matplotlib/mpl-data/
     export FREESURFER_HOME=/freesurfer/freesurfer/
     . /freesurfer/freesurfer/SetUpFreeSurfer.sh
+    export FS_LICENSE=$SINGULARITY_ROOTFS/license.txt
 
 %post
     export FREESURFER_HOME=/freesurfer/freesurfer/
@@ -28,8 +30,9 @@ From: centos:centos7
     yum install -y hostname openssl openssl-devel sqlite-devel sudo tar which
     yum install -y libgomp tcsh bc perl wget unzip git
     yum install -y gcc openssl-devel bzip2-devel libffi-devel zlib-devel xz-devel
-    yum -y install tcsh bc mesa-libGLU libgomp perl mesa-dri-drivers
-    yum -y install xorg-x11-server-Xvfb xorg-x11-xauth which libfontconfig1 libxrender1 libXrender
+    yum install -y tcsh bc mesa-libGLU libgomp perl mesa-dri-drivers
+    yum install -y xorg-x11-server-Xvfb xorg-x11-xauth which
+    yum install -y java-1.8.0-openjdk
 
     export LC_CTYPE="en_US.UTF-8"
     export LC_ALL="en_US.UTF-8"
@@ -42,12 +45,11 @@ From: centos:centos7
     make && make install
     echo 'will cite' | parallel --citation 1> /dev/null 2> /dev/null &
 
-    mv $SINGULARITY_ROOTFS/license.txt $FREESURFER_HOME/
     mv $SINGULARITY_ROOTFS/fs_install_mcr.sh $FREESURFER_HOME/bin/
-    bash /freesurfer/freesurfer/bin/fs_install_mcr.sh R2014b
+    bash /freesurfer/freesurfer/bin/fs_install_mcr.sh R2012b
 
     yum -y install atlas-devel lapack-devel blas-devel
-    yum -y install libjpeg-devel
+    yum -y install libjpeg-devel ImageMagick
 
     cd /tmp && \
     wget 'https://www.openssl.org/source/openssl-1.1.0h.tar.gz' &&\
@@ -73,7 +75,28 @@ From: centos:centos7
     ldconfig
 
     pip3.7 install --upgrade pip
-    git clone https://github.com/scilus/scilpy.git $SINGULARITY_ROOTFS/scilpy/ && cd $SINGULARITY_ROOTFS/scilpy/
-    git checkout be6944a
-    pip3.7 install numpy==1.21.*
-    pip3.7 install -e .
+    pip install fpdf
+    pip install scikit-image
+    git clone https://github.com/frheault/scilpy.git $SINGULARITY_ROOTFS/scilpy/ && cd $SINGULARITY_ROOTFS/scilpy/
+    git checkout 7f9aebe3
+    pip3.7 install -r requirements.txt
+    python3.7 setup.py develop
+    cd ../
+    sed -i '41s/.*/backend : Agg/' /usr/local/lib/python3.7/site-packages/matplotlib/mpl-data/matplotlibrc
+
+    wget https://github.com/nextflow-io/nextflow/releases/download/v19.04.0/nextflow-19.04.0-all
+    mv nextflow-19.04.0-all /nextflow
+    chmod +x /nextflow
+
+    git clone https://github.com/frheault/freesurfer-nf.git
+    cd freesurfer-nf/
+    git checkout b1e408b
+    sed -i 's/scratch = true/scratch = false/g' $SINGULARITY_ROOTFS/freesurfer-nf/nextflow.config
+
+    # Make custom folders
+    mkdir -p /INPUTS && chmod 755 /INPUTS 
+    mkdir -p /OUTPUTS && chmod 775 /OUTPUTS
+    mkdir -p /TMP && chmod 775 /TMP
+
+%runscript
+    xvfb-run -a --server-num=$((65536+$$)) --server-args="-screen 0 1600x1280x24 -ac" bash /CODE/launch_connectivity_atlases_flow_wrapper.sh /INPUTS /OUTPUTS "$@"
