@@ -5,14 +5,14 @@ From: centos:centos7
     rm -rf $SINGULARITY_ROOTFS/freesurfer
     mkdir $SINGULARITY_ROOTFS/freesurfer
 
-    #wget -O freesurfer-linux-centos7_x86_64-dev.tar.gz "https://www.dropbox.com/s/qhhje2ond0ja7px/freesurfer-linux-centos7_x86_64-dev.tar.gz?dl=0?download=1"
+    wget -O freesurfer-linux-centos7_x86_64-dev.tar.gz "https://www.dropbox.com/s/qhhje2ond0ja7px/freesurfer-linux-centos7_x86_64-dev.tar.gz?dl=0?download=1"
     tar zxvf freesurfer-linux-centos7_x86_64-dev.tar.gz -C $SINGULARITY_ROOTFS/freesurfer/
 
     wget -O $SINGULARITY_ROOTFS/fs_install_mcr.sh "https://www.dropbox.com/s/v54cc4v6e6im0i9/fs_install_mcr.sh?dl=0d?download=1"
 
     wget -O $SINGULARITY_ROOTFS/license.txt "https://www.dropbox.com/s/zs4k3bcfxderj58/license.txt?dl=0"
 
-    #wget -O FS_BN_GL_SF_utils.tar "https://www.dropbox.com/s/zzptxby9pf5lpih/FS_BN_GL_SF_utils.tar?dl=0?download=1"
+    wget -O FS_BN_GL_SF_utils.tar "https://www.dropbox.com/s/zzptxby9pf5lpih/FS_BN_GL_SF_utils.tar?dl=0?download=1"
     tar -xf FS_BN_GL_SF_utils.tar -C $SINGULARITY_ROOTFS/
 
     mkdir $SINGULARITY_ROOTFS/pybin $SINGULARITY_ROOTFS/CODE/
