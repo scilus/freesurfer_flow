@@ -59,7 +59,7 @@ Need to have FreeSurfer v. 6.0
 The intermediate working directory is, by default, set to './work'.
 To change it, use the '-w WORK_DIR' argument.
 
-The default config file is freesurfer-nf/nextflow.config.
+The default config file is freesurfer_flow/nextflow.config.
 Use '-C config_file.config' to specify a non-default configuration file.
 The '-C config_file.config' must be inserted after the nextflow call
 like 'nextflow -C config_file.config run ...'.
