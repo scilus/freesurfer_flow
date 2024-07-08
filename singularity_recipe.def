@@ -95,6 +95,7 @@ From: centos:centos7
 
     git clone https://github.com/scilus/freesurfer_flow.git
     cd freesurfer_flow/
+    git fetch origin pull/8/head && git checkout FETCH_HEAD
     sed -i 's/scratch = true/scratch = false/g' $SINGULARITY_ROOTFS/freesurfer_flow/nextflow.config
 
     # Make custom folders
