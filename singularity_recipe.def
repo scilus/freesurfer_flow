@@ -62,9 +62,9 @@ From: centos:centos7
     ./config shared --prefix=/usr/local/openssl11 --openssldir=/usr/local/openssl11 && make && make install
 
     cd /tmp && \
-    wget https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tgz && \
-    tar xvfz Python-3.7.3.tgz && \
-    cd Python-3.7.3 && \
+    wget https://www.python.org/ftp/python/3.8.19/Python-3.8.19.tgz && \
+    tar xvfz Python-3.8.19.tgz && \
+    cd Python-3.8.19 && \
     # Fix the SSL headers https://benad.me/blog/2018/07/17/python-3.7-on-centos-6/
     sed -i 's/SSL=\/usr\/local\/ssl/SSL=\/usr\/local\/openssl11/g' Modules/Setup.dist &&\
     sed -i '211,214 s/^##*//' Modules/Setup.dist &&\
@@ -78,12 +78,11 @@ From: centos:centos7
     echo "/usr/local/lib" >> /etc/ld.so.conf
     ldconfig
 
-    pip3.7 install --upgrade pip
+    pip3.8 install --upgrade pip
     pip install fpdf
     pip install scikit-image
     git clone https://github.com/scilus/scilpy.git $SINGULARITY_ROOTFS/scilpy/ && cd $SINGULARITY_ROOTFS/scilpy/
-    git checkout 1.4.2
-    pip3.7 install scikit-learn==0.22.*
+    git checkout 2.0.2
     pip3.7 install -r requirements.txt
     python3.7 setup.py develop
     cd ../
@@ -95,6 +94,7 @@ From: centos:centos7
 
     git clone https://github.com/scilus/freesurfer_flow.git
     cd freesurfer_flow/
+    git fetch origin pull/8/head && git checkout FETCH_HEAD
     sed -i 's/scratch = true/scratch = false/g' $SINGULARITY_ROOTFS/freesurfer_flow/nextflow.config
 
     # Make custom folders
