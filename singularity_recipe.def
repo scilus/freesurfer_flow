@@ -8,10 +8,10 @@ From: centos:centos7
     #wget -O freesurfer-linux-centos7_x86_64-dev.tar.gz "https://www.dropbox.com/s/qhhje2ond0ja7px/freesurfer-linux-centos7_x86_64-dev.tar.gz?dl=0?download=1"
     tar zxvf freesurfer-linux-centos7_x86_64-dev.tar.gz -C $SINGULARITY_ROOTFS/freesurfer/
 
-    wget -O $SINGULARITY_ROOTFS/fs_install_mcr.sh "https://www.dropbox.com/s/v54cc4v6e6im0i9/fs_install_mcr.sh?dl=0d?download=1"
-
-    wget -O $SINGULARITY_ROOTFS/license.txt "https://www.dropbox.com/s/zs4k3bcfxderj58/license.txt?dl=0"
-
+    #wget -O $SINGULARITY_ROOTFS/fs_install_mcr.sh "https://www.dropbox.com/s/v54cc4v6e6im0i9/fs_install_mcr.sh?dl=0d?download=1"
+    cp fs_install_mcr.sh $SINGULARITY_ROOTFS/
+    #wget -O $SINGULARITY_ROOTFS/license.txt "https://www.dropbox.com/s/zs4k3bcfxderj58/license.txt?dl=0"
+    cp license.txt $SINGULARITY_ROOTFS/
     #wget -O FS_BN_GL_SF_utils.tar "https://www.dropbox.com/s/zzptxby9pf5lpih/FS_BN_GL_SF_utils.tar?dl=0?download=1"
     tar -xf FS_BN_GL_SF_utils.tar -C $SINGULARITY_ROOTFS/
 
@@ -26,6 +26,9 @@ From: centos:centos7
 
 %post
     export FREESURFER_HOME=/freesurfer/freesurfer/
+    export SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True
+    sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+    sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
     yum update -y
     yum groupinstall -y development
     yum install -y hostname openssl openssl-devel sqlite-devel sudo tar which
