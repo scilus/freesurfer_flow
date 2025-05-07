@@ -47,6 +47,8 @@ OPTIONAL ARGUMENTS (current value)
 --compute_lausanne_multiscale           Compute the connectivity multiscale atlases from lausanne ($compute_lausanne_multiscale)
 --processes                             The number of parallel processes to launch ($cpu_count).
                                             Only affects the local scheduler.
+--output_dir                            Output directory for the results ($output_dir)
+
 
 
 NOTES
