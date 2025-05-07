@@ -8,6 +8,7 @@ if(params.help) {
                 "atlas_utils_folder":"$params.atlas_utils_folder",
                 "compute_FS_BN_GL_SF":"$params.compute_FS_BN_GL_SF",
                 "compute_lausanne_multiscale":"$params.compute_lausanne_multiscale",
+                "output_dir":"$params.output_dir",
 		        "cpu_count":"$cpu_count"]
     engine = new groovy.text.SimpleTemplateEngine()
     template = engine.createTemplate(usage.text).make(bindings)
@@ -41,6 +42,7 @@ log.info "======="
 log.info ""
 log.info "Number of Thread: $params.nb_threads"
 log.info "Atlas Utils Folder: $params.atlas_utils_folder"
+log.info "Output Dir: $params.output_dir"
 log.info ""
 
 if (params.root_fs_input) {
