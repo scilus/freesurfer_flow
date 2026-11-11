@@ -1,5 +1,5 @@
 ARG FREESURFER_BUILD_IMAGE=ubuntu:22.04
-ARG SCILPY_BASE_IMAGE=scilus/scilpy:dev
+ARG SCILPY_BASE_IMAGE=scilus/scilpy:2.1.0
 
 # Create a stage to build the freesurfer image (only essential scripts).
 FROM $FREESURFER_BUILD_IMAGE AS build_freesurfer
@@ -12,12 +12,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       ca-certificates \
       file \
       git \
+      python3-pip python3-full \
       upx \
       wget && \
-    apt clean && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ARG PYTHON_VERSION=3.10
+
+
+RUN pip3 install gdown
 
 # Fetch install script in docker.
 RUN mkdir /install
@@ -28,8 +32,6 @@ SHELL ["/bin/bash", "--login", "-c"]
 ARG FREESURFER_URL=default
 
 RUN /install/install_freesurfer.sh /opt --upx --url $FREESURFER_URL
-RUN rm /opt/freesurfer/bin/fspython
-RUN rm -R /install
 
 # Main stage from scilpy base image.
 FROM $SCILPY_BASE_IMAGE AS runtime
@@ -52,15 +54,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       wget \
       curl \
       time \
-      tcsh && \
-    apt clean && \
+      parallel \
+      tcsh \
+      python3-pip && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Installing Parallel
-# Installing dependencies.
-RUN (wget -O - pi.dk/3 || curl pi.dk/3/) | bash
-RUN echo 'will cite' | parallel --citation 1> /dev/null 2> /dev/null &
-RUN rm parallel*.tar.bz2*
+RUN pip3 install gdown
 
 # Add FreeSurfer and python Environment variables
 # DO_NOT_SEARCH_FS_LICENSE_IN_FREESURFER_HOME=true deactivates the search for FS_LICENSE in FREESURFER_HOME
@@ -70,16 +70,16 @@ ENV OS=Linux \
     SUBJECTS_DIR=/opt/freesurfer/subjects \
     FSF_OUTPUT_FORMAT=nii.gz \
     FREESURFER_HOME=/opt/freesurfer \
-    PYTHONUNBUFFERED=0 \
-    MPLCONFIGDIR=/tmp \
+    PYTHONUNBUFFERED=1 \
     PATH=/venv/bin:/opt/freesurfer/bin:$PATH \
-    PYTHONPATH=opt/freesurfer/python/packages:$PYTHONPATH \
+    PYTHONPATH=/opt/freesurfer/python/packages:$PYTHONPATH \
     MPLCONFIGDIR=/tmp/matplotlib-config \
     DO_NOT_SEARCH_FS_LICENSE_IN_FREESURFER_HOME="true"
 
 COPY --from=build_freesurfer /opt/freesurfer /opt/freesurfer
 
-RUN wget -O /FS_BN_GL_SF_utils.tar "https://www.dropbox.com/s/zzptxby9pf5lpih/FS_BN_GL_SF_utils.tar?dl=0?download=1"
+RUN gdown 16ld6s45VeoLFkVcgei7unAkaZtgx7F1U -O FS_BN_GL_SF_utils.tar
+
 RUN wget -O /opt/freesurfer/.license "https://www.dropbox.com/s/zs4k3bcfxderj58/license.txt?dl=0"
 
 RUN ["tar", "xf", "/FS_BN_GL_SF_utils.tar"]
