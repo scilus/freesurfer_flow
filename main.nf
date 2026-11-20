@@ -121,6 +121,7 @@ process Generate_Atlases_Lobes {
     """
     mri_convert ${folder}/mri/rawavg.mgz rawavg.nii.gz
     mri_convert ${folder}/mri/wmparc.mgz wmparc.nii.gz
+
     scil_volume_reslice_to_reference wmparc.nii.gz rawavg.nii.gz wmparc.nii.gz --interpolation nearest -f
     scil_volume_math convert wmparc.nii.gz wmparc.nii.gz --data_type uint16 -f
     mri_convert ${folder}/mri/brainmask.mgz brain_mask.nii.gz
