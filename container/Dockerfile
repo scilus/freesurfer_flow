@@ -78,7 +78,7 @@ ENV OS=Linux \
 
 COPY --from=build_freesurfer /opt/freesurfer /opt/freesurfer
 
-RUN gdown 16ld6s45VeoLFkVcgei7unAkaZtgx7F1U -O FS_BN_GL_SF_utils.tar
+RUN gdown 1CAsP5sYUXJTiMoe_8OXjDfDSdGfJFCIl -O FS_BN_GL_SF_utils.tar
 
 RUN wget -O /opt/freesurfer/.license "https://www.dropbox.com/s/zs4k3bcfxderj58/license.txt?dl=0"
 
