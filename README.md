@@ -28,30 +28,19 @@ Requirements
 
 Singularity/Docker
 -----------
-If you are on Linux, we recommend using the Singularity to run tractometry_flow pipeline.
-If you have Apptainer (Singularity), launch your Nextflow command with:
-`-with-singularity ABSOLUTE_PATH/scilus-freesurfer-2.1.0.sif`
+If you are on Linux, we recommend using the Apptainer/Singularity to run tractometry_flow pipeline.
+If you have Apptainer (Singularity), first you need to build the container using this command:
 
-Image is available [here](http://scil.dinf.usherbrooke.ca/en/containers_list/scilus-freesurfe_2.1.0.sif)
+`apptainer build scilus-freesurfer-2.1.0.sif docker://scilus/scilus-freesurfer:2.1.0` 
+
+Then in order to use it, add this to your nextflow command:
+
+`-with-singularity ABSOLUTE_PATH/scilus-freesurfer-2.1.0.sif`
 
 If you are on MacOS or Windows, we recommend using the Docker container to run tractometry_flow pipeline.
 Launch your Nextflow command with:
+
 `-with-docker scilus/scilus-freesurfer:2.1.0`
-
-:warning: WARNING :warning:
----------
-The official release 2.1.0 is **NOT** available now.
-
-Please, either build the singularity container using this command:
-
-`singularity build scilus-freesurfer-dev.sif docker://scilus/scilus-freesurfer:dev` 
-
-and then launch your Nextflow command with:
-`-with-singularity ABSOLUTE_PATH/scilus-freesurfer_dev.sif`
-
-Or launch your Nextflow command with docker:
-`-with-docker scilus/scilus-freesurfer:dev`
-
 
 Usage
 -----
