@@ -100,13 +100,6 @@ function run_parallel ()
 # get FreeSurfer and unpack (some of it)
 echo "Downloading FS and unpacking portions ..."
 wget --no-check-certificate -qO- $fslink  | tar zxv --no-same-owner -C $where \
-      --exclude='freesurfer/average/*.gca' \
-      --exclude='freesurfer/average/Buckner_JNeurophysiol11_MNI152' \
-      --exclude='freesurfer/average/Choi_JNeurophysiol12_MNI152' \
-      --exclude='freesurfer/average/mult-comp-cor' \
-      --exclude='freesurfer/average/samseg' \
-      --exclude='freesurfer/average/Yeo_Brainmap_MNI152' \
-      --exclude='freesurfer/average/Yeo_JNeurophysiol11_MNI152' \
       --exclude='freesurfer/bin/freeview.bin' \
       --exclude='freesurfer/bin/freeview' \
       --exclude='freesurfer/bin/fs_spmreg.glnxa64' \
@@ -121,7 +114,6 @@ wget --no-check-certificate -qO- $fslink  | tar zxv --no-same-owner -C $where \
       --exclude='freesurfer/bin/SegmentSubjectT2_autoEstimateAlveusML' \
       --exclude='freesurfer/diffusion' \
       --exclude='freesurfer/fsafd' \
-      --exclude='freesurfer/fsfast' \
       --exclude='freesurfer/lib/cuda' \
       --exclude='freesurfer/lib/images' \
       --exclude='freesurfer/lib/qt' \
@@ -131,10 +123,6 @@ wget --no-check-certificate -qO- $fslink  | tar zxv --no-same-owner -C $where \
       --exclude='freesurfer/mni-1.4' \
       --exclude='freesurfer/mni' \
       --exclude='freesurfer/models' \
-      --exclude='freesurfer/python/bin' \
-      --exclude='freesurfer/python/include' \
-      --exclude='freesurfer/python/lib' \
-      --exclude='freesurfer/python/share' \
       --exclude='freesurfer/subjects/bert' \
       --exclude='freesurfer/subjects/cvs_avg35_inMNI152' \
       --exclude='freesurfer/subjects/cvs_avg35' \
@@ -411,7 +399,7 @@ if [[ "$upx" == "true" ]] ; then
 fi
 
 # Modify fsbindings Python package to allow calling scripts like asegstats2table directly:
-echo "from . import legacy" > "$fsd/python/packages/fsbindings/__init__.py"
+# echo "from . import legacy" > "$fsd/python/packages/fsbindings/__init__.py"
 
 # FS looks for them, but does not call them
 #touch_files="/average/RB_all_2020-01-02.gca"
@@ -469,15 +457,6 @@ do
   echo "linking $file"
   ln -s $ltrg $fsd/$file
 done
-
-# use our python (not really needed in recon-all anyway)
-p3=$(which python3)
-if [ "$p3" == "" ]; then
-  echo "No python3 found, please install first!"
-  echo
-#  exit 1
-fi
-#ln -s $p3 $fsd/bin/fspython
 
 #cleanup
 rm -rf $fss
