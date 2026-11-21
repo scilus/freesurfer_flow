@@ -159,7 +159,7 @@ process Generate_Atlases_Lausanne {
     """
     ln -s $params.atlas_utils_folder/fsaverage \$(dirname ${folder})/
     freesurfer_home=\$(dirname \$(dirname \$(which mri_label2vol)))
-    python3.10 $params.atlas_utils_folder/lausanne_multi_scale_atlas/generate_multiscale_parcellation.py \$(dirname ${folder}) ${sid} \$freesurfer_home --scale ${scale} --dilation_factor 0 --log_level DEBUG
+    python3 $params.atlas_utils_folder/lausanne_multi_scale_atlas/generate_multiscale_parcellation.py \$(dirname ${folder}) ${sid} \$freesurfer_home --scale ${scale} --dilation_factor 0 --log_level DEBUG
 
     mri_convert ${folder}/mri/rawavg.mgz rawavg.nii.gz
     scil_volume_math lower_threshold rawavg.nii.gz 0.001 mask.nii.gz --data_type uint8

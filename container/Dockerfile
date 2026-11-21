@@ -1,5 +1,5 @@
 ARG FREESURFER_BUILD_IMAGE=ubuntu:22.04
-ARG SCILPY_BASE_IMAGE=scilus/scilpy:2.1.0
+ARG SCILPY_BASE_IMAGE=scilus/scilpy:2.3.0_cpu
 
 # Create a stage to build the freesurfer image (only essential scripts).
 FROM $FREESURFER_BUILD_IMAGE AS build_freesurfer
@@ -33,6 +33,9 @@ ARG FREESURFER_URL=default
 
 RUN /install/install_freesurfer.sh /opt --upx --url $FREESURFER_URL
 
+# Download extra utils here (gdown is available in this stage).
+RUN gdown 11jz439JuoSUBUld7_WLGMCCFz5Uj3HgY -O /FS_BN_GL_SF_utils.tar
+
 # Main stage from scilpy base image.
 FROM $SCILPY_BASE_IMAGE AS runtime
 
@@ -60,10 +63,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN pip3 install gdown
-
 # Add FreeSurfer and python Environment variables
 # DO_NOT_SEARCH_FS_LICENSE_IN_FREESURFER_HOME=true deactivates the search for FS_LICENSE in FREESURFER_HOME
+# Declared so the build linter knows PYTHONPATH (keeps the base image value if it sets one).
+ARG PYTHONPATH
 ENV OS=Linux \
     FS_OVERRIDE=0 \
     FIX_VERTEX_AREA="" \
@@ -72,15 +75,17 @@ ENV OS=Linux \
     FREESURFER_HOME=/opt/freesurfer \
     PYTHONUNBUFFERED=1 \
     PATH=/venv/bin:/opt/freesurfer/bin:$PATH \
-    PYTHONPATH=/opt/freesurfer/python/packages:$PYTHONPATH \
+    PYTHONPATH=/opt/freesurfer/python/packages${PYTHONPATH:+:$PYTHONPATH} \
     MPLCONFIGDIR=/tmp/matplotlib-config \
     DO_NOT_SEARCH_FS_LICENSE_IN_FREESURFER_HOME="true"
 
 COPY --from=build_freesurfer /opt/freesurfer /opt/freesurfer
 
-RUN gdown 1CAsP5sYUXJTiMoe_8OXjDfDSdGfJFCIl -O FS_BN_GL_SF_utils.tar
-
 RUN wget -O /opt/freesurfer/.license "https://www.dropbox.com/s/zs4k3bcfxderj58/license.txt?dl=0"
 
-RUN ["tar", "xf", "/FS_BN_GL_SF_utils.tar"]
-RUN ["rm", "/FS_BN_GL_SF_utils.tar"]
+COPY --from=build_freesurfer /FS_BN_GL_SF_utils.tar /FS_BN_GL_SF_utils.tar
+# The archive carries mode 700 + a host uid; normalize so files copied out by
+# processes (running as root) stay readable by the host user during unstaging.
+RUN tar xf /FS_BN_GL_SF_utils.tar -C / --no-same-owner --no-same-permissions && \
+    chmod -R a+rX,go-w /FS_BN_GL_SF_utils && \
+    rm /FS_BN_GL_SF_utils.tar
